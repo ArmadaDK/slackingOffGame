@@ -9,6 +9,18 @@ class playerInstance {
     this.direction = direction;
   }
 
+  // 是否受击
+  isHurt(balls) {
+    for (let item of balls) {
+      console.log(this.x, this.y, item.x, item.y);
+      let distance = getDistance(this.x, this.y, item.x, item.y)
+      if (distance <= this.radius) {
+        console.log(distance);
+        this.isAlive = false;
+        break;
+      }
+    }
+  }
   // 是否已输
   isLosen = () => {
     if (!this.isAlive) {
@@ -86,8 +98,12 @@ class playerInstance {
     // 每射一发就会变小
     // this.radius--;
     // 创建小球实例
-    const oneBall = new ball(this.x, this.y, this.color, this.direction);
-    console.log("shoot");
+    const oneBall = new ball(
+      this.x + Math.cos(this.direction) * (this.radius + 1),
+      this.y + Math.sin(this.direction) * (this.radius + 1),
+      this.color,
+      this.direction
+    );
     // 存入数组以便多个子弹一起渲染
     balls.push(oneBall);
   }
@@ -123,4 +139,8 @@ class ball {
   isEmpty = () => {
     return this.time <= 0;
   };
+}
+
+function getDistance(Ax, Ay, Bx, By) {
+  return Math.sqrt(Math.pow(Ax - Bx, 2) + Math.pow(Ay - By, 2))
 }

@@ -76,6 +76,9 @@
                 player2 = new playerInstance(10, 10, "blue");
               }
             } else {
+              // 是否受击判断
+              player1.isHurt(balls);
+              player2.isHurt(balls);
               // 胜负判断
               if (player1.isLosen()) {
                 ctx.font = "30px Arial";
