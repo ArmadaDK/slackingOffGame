@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    body {
+      background: url("./bg.png") no-repeat;
+    }
+  </style>
+
+  <body>
+    <canvas id="myCanvas" class="canvas" width="1000" height="800"></canvas>
+  </body>
+  <script src="./canvasItem/player.js"></script>
+  <script src="./canvasItem/socket.js"></script>
+  <script>
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+    let player1;
+    let player2;
+    let balls = [];
+    let shootFlag = false;
+
+    // 为了能按组合键（w+d左上角移动，w+e一边向上一边右转。。。）
+    let keys = {
+      KeyA: false,
+      KeyD: false,
+      KeyS: false,
+      KeyW: false,
+      KeyQ: false,
+      KeyE: false,
+      Space: false,
+    };
+
+    // 绘制函数
+    function draw() {
+      if (playerNo !== 0) {
+        // 清除画布
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (!player1) {
+          if (playerNo === 1) {
+            player1 = new playerInstance(10, 10, "red");
+          } else {
+            player1 = new playerInstance(500, 500, "red", Math.PI);
+          }
+        } else {
+          // 自己的键盘事件触发
+          PlayerEvent(player1, keys);
+
+          if (enemyOnline) {
+            let content = { ...keys };
+            if (shootFlag === true) {
+              content.Space = true;
+            } else {
+              content.Space = false;
+            }
+
+            socket.send(
+              JSON.stringify({
+                type: 2,
+                key: content,
+              })
+            );
+            shootFlag = false;
+            if (!player2) {
+              console.log("对手已上线");
+              if (playerNo === 1) {
+                player2 = new playerInstance(500, 500, "blue", Math.PI);
+              } else {
+                player2 = new playerInstance(10, 10, "blue");
+              }
+            } else {
+              // 胜负判断
+              if (player1.isLosen()) {
+                ctx.font = "30px Arial";
+                ctx.fillStyle = "red";
+                ctx.fillText("you Lose!", 100, 100);
+                return;
+              } else if (player2.isLosen()) {
+                ctx.font = "30px Arial";
+                ctx.fillStyle = "red";
+                ctx.fillText("you Win!", 100, 100);
+                return;
+              }
+              PlayerEvent(player2, enemyKeys);
+            }
+          }
+
+          //玩家炮台绘制
+          player1.draw(ctx);
+          player2 && player2.draw(ctx);
+
+          // 发射小球绘制
+          balls = balls.filter((item) => !item.isEmpty());
+          balls.forEach((item) => {
+            item.biu(ctx, 10);
+          });
+        }
+      }
+      // 请求下一帧动画
+      requestAnimationFrame(draw);
+    }
+    draw();
+
+    // 为了方便按键组合
+    window.addEventListener("keydown", (event) => {
+      keys[event.code] = true;
+    });
+    window.addEventListener("keyup", (event) => {
+      keys[event.code] = false;
+    });
+
+    function PlayerEvent(player, k) {
+      //   if (player === player2 && k.KeyD) {
+      //     console.log(k.keyD, "dddd");
+      //   }
+      if (k.KeyA === true) {
+        player.goLeft();
+      }
+      if (k.KeyD === true) {
+        player.goRight();
+      }
+      if (k.KeyW === true) {
+        player.goUp();
+      }
+      if (k.KeyS === true) {
+        player.goDown();
+      }
+      if (k.KeyQ === true) {
+        player.turnLeft();
+      }
+      if (k.KeyE === true) {
+        player.turnRight();
+      }
+      if (k.Space === true) {
+        shootFlag = true;
+        // 空格
+        player.shoot(balls);
+
+        k.Space = false;
+      }
+    }
+  </script>
+</html>
