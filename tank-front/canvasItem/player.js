@@ -96,7 +96,7 @@ class playerInstance {
   // 空格射击小球
   shoot(balls) {
     // 每射一发就会变小
-    // this.radius--;
+    this.radius--;
     // 创建小球实例
     const oneBall = new ball(
       this.x + Math.cos(this.direction) * (this.radius + 1),

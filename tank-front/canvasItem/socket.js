@@ -12,6 +12,7 @@ let enemyKeys = {
   KeyE: false,
   Space: false,
 };
+let walls = [];
 // 当连接建立时触发
 socket.onopen = () => {
   console.log("WebSocket 连接已建立");
@@ -39,6 +40,10 @@ socket.onmessage = (event) => {
     case 2:
       // 对手执行动作
       enemyKeys = msg.key;
+      break;
+    case 3:
+      walls = msg.walls;
+      console.log(walls);
       break;
   }
   // console.log(playerNo);

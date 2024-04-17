@@ -16,6 +16,7 @@
   </body>
   <script src="./canvasItem/player.js"></script>
   <script src="./canvasItem/socket.js"></script>
+  <script src="./canvasItem/env.js"></script>
   <script>
     const canvas = document.getElementById("myCanvas");
     const ctx = canvas.getContext("2d");
@@ -36,15 +37,30 @@
       KeyE: false,
       Space: false,
     };
+    
+    let wallsList = []
 
     // 绘制函数
     function draw() {
       if (playerNo !== 0) {
         // 清除画布
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if(wallsList.length === 0){
+          for(let item of walls){
+            wallsList.push(new wall(...item))
+          }
+        }
+        // 绘制墙壁
+        wallsList.forEach((item) => {
+          item.draw(ctx);
+        });
+
         if (!player1) {
           if (playerNo === 1) {
+            // drawWalls(ctx, walls);
             player1 = new playerInstance(10, 10, "red");
+            
           } else {
             player1 = new playerInstance(500, 500, "red", Math.PI);
           }
@@ -53,6 +69,15 @@
           playerEventHandle(player1, keys);
           // 判断对手是否在线
           if (enemyOnline) {
+            // if(playerNo === 1){
+            //   // 绘制环境
+            //   socket.send(
+            //     JSON.stringify({
+            //       type: 3,
+            //       walls: walls,
+            //     })
+            //   );
+            // }
             let content = { ...keys };
             // 空格只触发一次，然后立刻关闭
             if (shootFlag === true) {
@@ -120,9 +145,6 @@
     });
 
     function playerEventHandle(player, k) {
-      //   if (player === player2 && k.KeyD) {
-      //     console.log(k.keyD, "dddd");
-      //   }
       if (k.KeyA === true) {
         player.goLeft();
       }
