@@ -7,7 +7,6 @@ let player1 = null;
 let player2 = null;
 
 let walls = drawWalls()
-console.log(walls);
 // type: 0:玩家登录，1:通知对手已上线，2：动作执行，3：墙体初始化（由玩家1客户端随机生成
 server.on("connection", (socket) => {
   if (player1 === null) {
@@ -58,6 +57,8 @@ server.on("connection", (socket) => {
       }
     }
   });
+  /**/
+
 
   socket.on("close", () => {
     if (socket === player1) {

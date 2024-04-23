@@ -139,6 +139,24 @@ class ball {
   isEmpty = () => {
     return this.time <= 0;
   };
+  debounce(wall) {
+    // 小球的速度向量
+    let vx = Math.cos(this.direction); // 小球的x方向速度
+    let vy = Math.sin(this.direction); // 小球的y方向速度
+
+    // 墙的法线向量
+    var nx = wall.endY - wall.startX; // 墙的法线向量的x分量
+    var ny = wall.endX - wall.startY; // 墙的法线向量的y分量
+
+    // // 计算入射角度
+    // var incidenceAngle = Math.atan2(vy, vx);
+
+    // 计算反射角度
+    var dot = vx * nx + vy * ny;
+    var reflectionAngle = Math.atan2(vy - 2 * ny * dot, vx - 2 * nx * dot);
+
+    this.direction = reflectionAngle;
+  }
 }
 
 function getDistance(Ax, Ay, Bx, By) {

@@ -51,6 +51,15 @@
             wallsList.push(new wall(...item))
           }
         }
+        for(let wall of wallsList){
+          for(let ball of balls){
+            if(wall.isColliding(ball)){
+              ball.debounce(wall)
+              ball.biu(ctx)
+            }
+            
+          }
+        }
         // 绘制墙壁
         wallsList.forEach((item) => {
           item.draw(ctx);
@@ -69,15 +78,6 @@
           playerEventHandle(player1, keys);
           // 判断对手是否在线
           if (enemyOnline) {
-            // if(playerNo === 1){
-            //   // 绘制环境
-            //   socket.send(
-            //     JSON.stringify({
-            //       type: 3,
-            //       walls: walls,
-            //     })
-            //   );
-            // }
             let content = { ...keys };
             // 空格只触发一次，然后立刻关闭
             if (shootFlag === true) {
